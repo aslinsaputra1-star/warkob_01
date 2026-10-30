@@ -1,0 +1,15 @@
+{
+  "resendApiKey": "",
+  "fromEmail": "Warung Bang Kobra <onboarding@resend.dev>",
+  "senderName": "Warung Bang Kobra",
+  "replyTo": "rayyanarasid549@gmail.com",
+  "storeNotificationEmail": "rayyanarasid549@gmail.com",
+  "isEnabled": true,
+  "notifyCustomerReceipt": true,
+  "notifyStoreNewOrder": true,
+  "notifyStoreOrderStatus": true,
+  "lastTestAt": null,
+  "lastDeliveryAt": null,
+  "lastDeliveryStatus": null,
+  "lastDeliveryError": null
+}

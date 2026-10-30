@@ -1,0 +1,63 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 500 500" width="500" height="500">
+  <defs>
+    <!-- Path for curved top text: ES BANG KOBRA -->
+    <path id="topTextArc" d="M 75 250 A 175 175 0 0 1 425 250" fill="none" />
+    <!-- Path for curved bottom text: WA 08886446437 -->
+    <path id="bottomTextArc" d="M 415 250 A 165 165 0 0 1 85 250" fill="none" />
+    <!-- Subtle drop shadow for badge -->
+    <filter id="badgeShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="6" stdDeviation="8" flood-color="#000000" flood-opacity="0.15" />
+    </filter>
+  </defs>
+
+  <!-- Clean White Circular Badge Base -->
+  <circle cx="250" cy="250" r="236" fill="#FFFFFF" filter="url(#badgeShadow)" />
+
+  <!-- Outer Black Ring -->
+  <circle cx="250" cy="250" r="226" fill="none" stroke="#111111" stroke-width="10" />
+
+  <!-- Middle Decorative Thin Ring -->
+  <circle cx="250" cy="250" r="212" fill="none" stroke="#111111" stroke-width="3" stroke-dasharray="14 6" opacity="0.8" />
+
+  <!-- Inner Black Ring -->
+  <circle cx="250" cy="250" r="198" fill="none" stroke="#111111" stroke-width="5" />
+
+  <!-- Center Circle Backdrop -->
+  <circle cx="250" cy="250" r="140" fill="#FFFFFF" />
+
+  <!-- Arched Top Text: ES BANG KOBRA -->
+  <text font-family="'Impact', 'Arial Black', 'Plus Jakarta Sans', sans-serif" font-weight="900" font-size="44" fill="#111111" letter-spacing="3.5">
+    <textPath href="#topTextArc" startOffset="50%" text-anchor="middle">
+      ES BANG KOBRA
+    </textPath>
+  </text>
+
+  <!-- Side Star Emblems -->
+  <polygon points="62,250 67,260 78,260 70,267 73,277 62,271 52,277 55,267 47,260 58,260" fill="#111111" />
+  <polygon points="438,250 443,260 454,260 446,267 449,277 438,271 428,277 431,267 423,260 434,260" fill="#111111" />
+
+  <!-- Center Stylized Typography: warkob drink -->
+  <g transform="translate(250, 245)">
+    <!-- Main "warkob" lettering in bold script/brush aesthetic -->
+    <text x="0" y="-8" text-anchor="middle" font-family="'Brush Script MT', 'Pacifico', 'Caveat', 'Comic Sans MS', cursive, sans-serif" font-weight="900" font-size="78" fill="#111111" font-style="italic" letter-spacing="-1">
+      warkob
+    </text>
+    
+    <!-- Secondary "drink" lettering with decorative dynamic swash -->
+    <text x="32" y="44" text-anchor="middle" font-family="'Brush Script MT', 'Pacifico', 'Caveat', 'Comic Sans MS', cursive, sans-serif" font-weight="800" font-size="48" fill="#111111" font-style="italic">
+      drink
+    </text>
+    
+    <!-- Drink splash accent -->
+    <path d="M -70 38 Q -20 54 85 46 Q 30 52 -60 44 Z" fill="#111111" />
+    <circle cx="95" cy="42" r="3" fill="#111111" />
+    <circle cx="106" cy="36" r="2" fill="#111111" />
+  </g>
+
+  <!-- Arched Bottom Text: wa 08886446437 -->
+  <text font-family="'Impact', 'Arial Black', 'Plus Jakarta Sans', sans-serif" font-weight="800" font-size="30" fill="#111111" letter-spacing="3">
+    <textPath href="#bottomTextArc" startOffset="50%" text-anchor="middle">
+      wa 08886446437
+    </textPath>
+  </text>
+</svg>
