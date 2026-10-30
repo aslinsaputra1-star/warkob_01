@@ -209,6 +209,26 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
     savedAddress: localStorage.getItem('wbk_customer_address') || 'Asrama DQM (Komplek Utama)',
   }));
 
+  // Real-time Digital Clock for Customer
+  const [customerClockStr, setCustomerClockStr] = useState('09:42:00 WIB');
+  useEffect(() => {
+    const updateClock = () => {
+      const now = new Date();
+      setCustomerClockStr(
+        now
+          .toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit',
+            second: '2-digit',
+          })
+          .replace(/\./g, ':') + ' WIB'
+      );
+    };
+    updateClock();
+    const interval = setInterval(updateClock, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
   const [editName, setEditName] = useState(customerProfile.name);
   const [editPhone, setEditPhone] = useState(customerProfile.phone);
@@ -730,6 +750,34 @@ export const CustomerApp: React.FC<CustomerAppProps> = ({
                 <X className="w-3.5 h-3.5" />
               </button>
             )}
+          </div>
+
+          {/* Real-time Status Strip: Store Open / Closed + Digital Clock + Service Mode */}
+          <div className="mt-2.5 pt-2 border-t border-gray-100 flex items-center justify-between text-[11px] text-gray-600 flex-wrap gap-2">
+            <div className="flex items-center gap-1.5">
+              <span
+                className={`inline-flex items-center gap-1 px-2 py-0.5 rounded-full font-bold text-[10px] uppercase ${
+                  storeStatus.isOpen
+                    ? 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    : 'bg-red-50 text-red-700 border border-red-200'
+                }`}
+              >
+                <span
+                  className={`w-1.5 h-1.5 rounded-full ${
+                    storeStatus.isOpen ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'
+                  }`}
+                />
+                {storeStatus.isOpen ? 'Warung Buka' : 'Warung Tutup'}
+              </span>
+              <span className="text-gray-400">•</span>
+              <span className="font-mono font-semibold text-gray-700">{customerClockStr}</span>
+            </div>
+
+            <div className="flex items-center gap-1.5 font-bold text-[#E50914] text-[10px] uppercase tracking-wide">
+              <span>🛍️ Takeaway</span>
+              <span className="text-gray-300">|</span>
+              <span>🛵 Delivery DQM</span>
+            </div>
           </div>
         </header>
 

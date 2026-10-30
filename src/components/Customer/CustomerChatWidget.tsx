@@ -19,6 +19,7 @@ import {
 import { StoreSettings } from '../../types';
 import { AutoReplyMessage, AutoReplySettings } from '../../types/autoReply';
 import { AutoReplyService, DEFAULT_AUTOREPLY_SETTINGS } from '../../services/autoReplyService';
+import { playCustomerMessageChime } from '../../utils/formatters';
 
 interface CustomerChatWidgetProps {
   settings: StoreSettings;
@@ -85,6 +86,10 @@ export const CustomerChatWidget: React.FC<CustomerChatWidgetProps> = ({
         };
         setMessages([welcome]);
       } else {
+        const lastMsg = msgs[msgs.length - 1];
+        if (lastMsg && (lastMsg.sender === 'bot' || lastMsg.sender === 'cashier')) {
+          playCustomerMessageChime();
+        }
         setMessages(msgs);
         if (!isOpen) {
           setUnreadBadge((prev) => Math.min(prev + 1, 9));

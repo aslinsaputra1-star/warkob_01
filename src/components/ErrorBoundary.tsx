@@ -131,7 +131,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
               onClick={this.handleFullReset}
               className="text-[11px] text-stone-500 hover:text-stone-300 underline font-semibold transition cursor-pointer"
             >
-              Reset Total Seluruh Database Lokal ke Pengaturan Demo Awal
+              Reset Total Seluruh Database Lokal ke Pengaturan Standar Warung
             </button>
           </div>
         </div>

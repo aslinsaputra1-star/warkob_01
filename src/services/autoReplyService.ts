@@ -26,6 +26,32 @@ import { Transaction, Product, StoreSettings } from '../types';
 import { StorageService } from './storage';
 import { PROMO_LIST } from '../components/Customer/CustomerPromoModal';
 
+/**
+ * Recursively removes any object keys whose values are `undefined`
+ * to guarantee Firestore setDoc, addDoc, and updateDoc never throw:
+ * "Unsupported field value: undefined"
+ */
+export function cleanFirestorePayload<T>(input: T): T {
+  if (input === null || input === undefined) {
+    return input;
+  }
+  if (Array.isArray(input)) {
+    return input
+      .filter((item) => item !== undefined)
+      .map((item) => cleanFirestorePayload(item)) as unknown as T;
+  }
+  if (typeof input === 'object' && !(input instanceof Date)) {
+    const cleaned: Record<string, any> = {};
+    for (const [k, v] of Object.entries(input as Record<string, any>)) {
+      if (v !== undefined) {
+        cleaned[k] = cleanFirestorePayload(v);
+      }
+    }
+    return cleaned as T;
+  }
+  return input;
+}
+
 // Default initial settings
 export const DEFAULT_AUTOREPLY_SETTINGS: AutoReplySettings = {
   id: 'global',
@@ -356,10 +382,14 @@ export class AutoReplyService {
     this.cachedSettings = settings;
     try {
       const docRef = doc(db, 'autoReplySettings', 'global');
-      await setDoc(docRef, {
-        ...settings,
-        updatedAt: new Date().toISOString(),
-      }, { merge: true });
+      await setDoc(
+        docRef,
+        cleanFirestorePayload({
+          ...settings,
+          updatedAt: new Date().toISOString(),
+        }),
+        { merge: true }
+      );
     } catch (err) {
       console.error('Failed to save autoReplySettings:', err);
       throw err;
@@ -396,10 +426,14 @@ export class AutoReplyService {
   static async saveTemplate(template: AutoReplyTemplate): Promise<void> {
     try {
       const docRef = doc(db, 'autoReplyTemplates', template.id);
-      await setDoc(docRef, {
-        ...template,
-        updatedAt: new Date().toISOString(),
-      }, { merge: true });
+      await setDoc(
+        docRef,
+        cleanFirestorePayload({
+          ...template,
+          updatedAt: new Date().toISOString(),
+        }),
+        { merge: true }
+      );
     } catch (err) {
       console.error('Failed to save template:', err);
       throw err;
@@ -448,10 +482,14 @@ export class AutoReplyService {
   static async saveFAQ(faq: AutoReplyFAQ): Promise<void> {
     try {
       const docRef = doc(db, 'autoReplyFAQs', faq.id);
-      await setDoc(docRef, {
-        ...faq,
-        updatedAt: new Date().toISOString(),
-      }, { merge: true });
+      await setDoc(
+        docRef,
+        cleanFirestorePayload({
+          ...faq,
+          updatedAt: new Date().toISOString(),
+        }),
+        { merge: true }
+      );
     } catch (err) {
       console.error('Failed to save FAQ:', err);
       throw err;
@@ -899,7 +937,7 @@ export class AutoReplyService {
     };
 
     // Save customer message
-    await setDoc(doc(db, 'messages', userMessageId), userMessage);
+    await setDoc(doc(db, 'messages', userMessageId), cleanFirestorePayload(userMessage));
 
     // 2. Compute Auto Reply
     const settings = this.cachedSettings;
@@ -910,7 +948,7 @@ export class AutoReplyService {
       const latency = Date.now() - startTime;
 
       const botMessageId = `MSG-${Date.now() + 1}-${Math.random().toString(36).slice(2, 6)}`;
-      botMessage = {
+      const newBotMessage: AutoReplyMessage = {
         messageId: botMessageId,
         conversationId: params.conversationId,
         sender: 'bot',
@@ -919,12 +957,19 @@ export class AutoReplyService {
         timestamp: new Date(Date.now() + (settings.replyDelaySeconds || 1) * 1000).toISOString(),
         deliveryStatus: 'sent',
         autoReply: true,
-        keywordMatched: replyData.keywordMatched,
-        metadata: replyData.metadata,
       };
 
+      if (replyData.keywordMatched !== undefined && replyData.keywordMatched !== null) {
+        newBotMessage.keywordMatched = replyData.keywordMatched;
+      }
+      if (replyData.metadata !== undefined && replyData.metadata !== null) {
+        newBotMessage.metadata = cleanFirestorePayload(replyData.metadata);
+      }
+
+      botMessage = newBotMessage;
+
       // Save bot reply
-      await setDoc(doc(db, 'messages', botMessageId), botMessage);
+      await setDoc(doc(db, 'messages', botMessageId), cleanFirestorePayload(botMessage));
 
       // Save Log
       const logId = `LOG-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`;
@@ -932,15 +977,15 @@ export class AutoReplyService {
         id: logId,
         timestamp: nowIso,
         conversationId: params.conversationId,
-        customerName: params.customerName,
-        customerPhone: params.customerPhone,
+        customerName: params.customerName || 'Pelanggan',
+        customerPhone: params.customerPhone || '',
         inquiry: params.messageText,
         reply: replyData.reply,
         ruleMatched: replyData.keywordMatched || 'GENERAL',
         status: replyData.status,
         responseTimeMs: latency,
       };
-      await setDoc(doc(db, 'autoReplyLogs', logId), logEntry);
+      await setDoc(doc(db, 'autoReplyLogs', logId), cleanFirestorePayload(logEntry));
     }
 
     // Update conversation record
@@ -953,9 +998,9 @@ export class AutoReplyService {
 
     const convData: AutoReplyConversation = {
       conversationId: params.conversationId,
-      customerId: params.customerId,
-      customerName: params.customerName,
-      customerPhone: params.customerPhone,
+      customerId: params.customerId || 'anon',
+      customerName: params.customerName || 'Pelanggan',
+      customerPhone: params.customerPhone || '',
       channel,
       lastMessage: botMessage ? botMessage.message : params.messageText,
       lastMessageAt: nowIso,
@@ -963,7 +1008,7 @@ export class AutoReplyService {
       status: updatedStatus,
     };
 
-    await setDoc(convRef, convData, { merge: true });
+    await setDoc(convRef, cleanFirestorePayload(convData), { merge: true });
 
     return { userMessage, botMessage };
   }
@@ -990,18 +1035,18 @@ export class AutoReplyService {
       autoReply: false,
     };
 
-    await setDoc(doc(db, 'messages', messageId), staffMessage);
+    await setDoc(doc(db, 'messages', messageId), cleanFirestorePayload(staffMessage));
 
     // Update conversation: reset unread, mark replied
     const convRef = doc(db, 'conversations', conversationId);
     await setDoc(
       convRef,
-      {
+      cleanFirestorePayload({
         lastMessage: messageText,
         lastMessageAt: nowIso,
         unreadCount: 0,
         status: 'replied',
-      },
+      }),
       { merge: true }
     );
 

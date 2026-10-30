@@ -1178,7 +1178,7 @@ export default function App() {
     }
   };
 
-  // Reset to initial demo data
+  // Reset to initial store settings and data
   const handleResetData = () => {
     StorageService.resetToDefault();
     setProducts(StorageService.getProducts());

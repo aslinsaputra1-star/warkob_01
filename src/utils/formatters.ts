@@ -928,6 +928,75 @@ export function playQueueChimeSound(): void {
 }
 
 /**
+ * Mainkan nada notifikasi pesan masuk pelanggan (Auto Reply & Chat)
+ */
+export function playCustomerMessageChime(volume: number = 0.3): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const AudioCtx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+
+    const playTone = (freq: number, start: number, duration: number) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(freq, start);
+      gain.gain.setValueAtTime(Math.min(1, Math.max(0, volume)), start);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + duration);
+    };
+
+    // Soft high droplet (A5 -> D6)
+    playTone(880.0, now, 0.12);
+    playTone(1174.66, now + 0.08, 0.32);
+  } catch (err) {
+    console.warn('Customer message audio chime error:', err);
+  }
+}
+
+/**
+ * Mainkan nada notifikasi pesanan baru masuk kasir
+ */
+export function playNewOrderChime(volume: number = 0.35): void {
+  if (typeof window === 'undefined') return;
+  try {
+    const AudioCtx =
+      window.AudioContext ||
+      (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext;
+    if (!AudioCtx) return;
+    const ctx = new AudioCtx();
+    const now = ctx.currentTime;
+
+    const playTone = (freq: number, start: number, duration: number) => {
+      const osc = ctx.createOscillator();
+      const gain = ctx.createGain();
+      osc.type = 'triangle';
+      osc.frequency.setValueAtTime(freq, start);
+      gain.gain.setValueAtTime(Math.min(1, Math.max(0, volume)), start);
+      gain.gain.exponentialRampToValueAtTime(0.0001, start + duration);
+      osc.connect(gain);
+      gain.connect(ctx.destination);
+      osc.start(start);
+      osc.stop(start + duration);
+    };
+
+    // Upbeat 3-tone arpeggio (C5 -> E5 -> G5)
+    playTone(523.25, now, 0.15);
+    playTone(659.25, now + 0.12, 0.18);
+    playTone(783.99, now + 0.24, 0.45);
+  } catch (err) {
+    console.warn('New order audio chime error:', err);
+  }
+}
+
+/**
  * Panggil nomor antrian menggunakan suara bahasa Indonesia (SpeechSynthesis)
  */
 export function callTakeawayQueueVoice(queueNo: string, customerName?: string): void {

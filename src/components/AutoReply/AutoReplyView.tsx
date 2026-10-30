@@ -196,7 +196,7 @@ export const AutoReplyView: React.FC<AutoReplyViewProps> = ({
 
     setIsSimulating(true);
     try {
-      const res = await AutoReplyService.computeAutoReply(text, 'Pelanggan Demo', autoReplyConfig);
+      const res = await AutoReplyService.computeAutoReply(text, 'Pelanggan Pengujian', autoReplyConfig);
       setSimulatorResponse(res.reply);
       setSimulatorRule(res.keywordMatched || 'GENERAL');
     } catch (err) {

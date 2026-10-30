@@ -21,6 +21,7 @@ import {
   Smartphone,
   Users,
   Shield,
+  ShieldCheck,
   Lock,
   History,
   FileSpreadsheet,
@@ -112,6 +113,7 @@ export type SettingsTabId =
   | 'notification'
   | 'pwa'
   | 'customer'
+  | 'status'
   | 'users'
   | 'security'
   | 'audit'
@@ -148,6 +150,7 @@ const SETTINGS_CATEGORIES: NavCategory[] = [
   { id: 'notification', label: 'Notifikasi & Suara', icon: Bell, description: 'Lonceng pesanan baru, getar & slider volume', keywords: ['notifikasi', 'suara', 'chime', 'bell', 'audio', 'volume', 'getar', 'pesanan baru'] },
   { id: 'pwa', label: 'PWA Mobile App', icon: Smartphone, description: 'Aplikasi Android tanpa instal playstore', keywords: ['pwa', 'aplikasi', 'mobile', 'install', 'apk', 'offline', 'homescreen'] },
   { id: 'customer', label: 'Portal Pelanggan', icon: Users, description: 'Guest order, verifikasi WA & riwayat pesanan', keywords: ['pelanggan', 'customer', 'guest', 'member', 'riwayat', 'pesanan'] },
+  { id: 'status', label: 'Status Aplikasi', icon: ShieldCheck, badge: 'FULL VERSION', description: 'Status lisensi Full Version aktif, tanpa masa trial & Cloud Firestore', keywords: ['status', 'full version', 'aktif', 'trial', 'lisensi', 'database', 'firestore', 'sistem', 'versi', 'permanen'] },
   { id: 'users', label: 'Pengguna & RBAC', icon: Users, description: 'Hak akses Owner, Admin, Kasir, Staff & Delivery', keywords: ['pengguna', 'user', 'role', 'rbac', 'owner', 'admin', 'kasir', 'staff', 'delivery'] },
   { id: 'security', label: 'Keamanan & Sesi', icon: Shield, description: 'Firebase Auth, session timeout & security rules', keywords: ['keamanan', 'security', 'auth', 'password', 'rules', 'sesi', 'login'] },
   { id: 'audit', label: 'Audit Log Cloud', icon: History, description: 'Riwayat riil perubahan setting, produk & transaksi', keywords: ['audit', 'log', 'riwayat', 'history', 'aktivitas', 'siapa', 'kapan'] },
@@ -258,7 +261,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
       ORDER: ['online_order', 'takeaway', 'delivery', 'po', 'customer'],
       STOCK: ['products', 'variants', 'stock'],
       COMMS: ['email', 'whatsapp', 'auto_reply', 'qrcode', 'notification'],
-      SYSTEM: ['users', 'security', 'audit', 'backup', 'about'],
+      SYSTEM: ['status', 'users', 'security', 'audit', 'backup', 'about'],
     }),
     []
   );
@@ -2552,10 +2555,10 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 <div className="p-4 rounded-2xl bg-rose-950/20 border border-rose-800/40 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
                   <div>
                     <div className="font-bold text-xs text-rose-200">
-                      Reset Data Transaksi &amp; Kasir ke Default Demo
+                      Reset Data Transaksi &amp; Kasir ke Pengaturan Standar
                     </div>
                     <p className="text-[11px] text-stone-400">
-                      Tindakan ini akan mengosongkan data demo lokal dan memuat ulang data awal warung.
+                      Tindakan ini akan mengosongkan riwayat transaksi lokal dan memuat ulang data awal warung.
                     </p>
                   </div>
                   <button
@@ -2563,7 +2566,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                     onClick={() => setIsDangerResetDbOpen(true)}
                     className="min-h-[40px] px-4 rounded-xl bg-rose-600 hover:bg-rose-500 text-white text-xs font-black shrink-0 transition active:scale-95 cursor-pointer"
                   >
-                    Reset Data Demo
+                    Reset Data Transaksi
                   </button>
                 </div>
               </div>
@@ -2571,7 +2574,159 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
           )}
 
           {/* ========================================================
-              24. TENTANG WARUNG BANG KOBRA
+              STATUS APLIKASI (FULL VERSION PERMANEN)
+             ======================================================== */}
+          {activeTab === 'status' && (
+            <SettingSectionCard
+              title="Status Aplikasi &amp; Lisensi"
+              subtitle="Informasi status operasional Full Version, lisensi permanen &amp; database Firebase Cloud Firestore"
+              icon={ShieldCheck}
+            >
+              <div className="space-y-4">
+                {/* Top Banner: FULL VERSION ACTIVE */}
+                <div className="p-5 rounded-2xl bg-gradient-to-r from-emerald-950 via-stone-900 to-stone-950 border border-emerald-500/30 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 shadow-lg">
+                  <div className="flex items-center gap-3.5">
+                    <div className="w-12 h-12 rounded-2xl bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 flex items-center justify-center shrink-0">
+                      <ShieldCheck className="w-6 h-6" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2 flex-wrap">
+                        <h3 className="text-base font-black text-white tracking-tight">WARUNG BANG KOBRA</h3>
+                        <span className="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 border border-emerald-500/40 text-[10px] font-black uppercase tracking-wider">
+                          ● AKTIF - FULL VERSION
+                        </span>
+                      </div>
+                      <p className="text-xs text-stone-300 mt-1">
+                        Aplikasi telah diaktivasi penuh untuk operasional permanen warung tanpa batas waktu.
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center gap-2 self-stretch sm:self-auto">
+                    <div className="px-3 py-1.5 rounded-xl bg-black/40 border border-white/10 text-xs font-mono text-emerald-400 font-bold flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
+                      <span>LISENSI AKTIF</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Grid of 6 Status Parameters requested by User */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3">
+                  {/* 1. Nama Aplikasi */}
+                  <div className="p-4 rounded-2xl bg-stone-950 border border-stone-850 space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Nama Aplikasi</span>
+                    <span className="text-sm font-black text-white block">WARUNG BANG KOBRA</span>
+                    <span className="text-[11px] text-stone-400 block">Sistem POS, Kasir &amp; Pemesanan</span>
+                  </div>
+
+                  {/* 2. Versi Aplikasi */}
+                  <div className="p-4 rounded-2xl bg-stone-950 border border-stone-850 space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Versi Aplikasi</span>
+                    <div className="flex items-center gap-2">
+                      <span className="text-sm font-black text-white">v3.0.0 Pro</span>
+                      <span className="text-[9px] font-black text-[#E50914] bg-red-500/10 border border-red-500/30 px-1.5 py-0.5 rounded">TERBARU</span>
+                    </div>
+                    <span className="text-[11px] text-stone-400 block">Produksi Full Version</span>
+                  </div>
+
+                  {/* 3. Status Aplikasi */}
+                  <div className="p-4 rounded-2xl bg-stone-950 border border-stone-850 space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Status Aplikasi</span>
+                    <div className="flex items-center gap-1.5">
+                      <span className="w-2 h-2 rounded-full bg-emerald-500" />
+                      <span className="text-sm font-black text-emerald-400">AKTIF (ACTIVE)</span>
+                    </div>
+                    <span className="text-[11px] text-stone-400 block">Semua fitur operasional 100%</span>
+                  </div>
+
+                  {/* 4. Mode Aplikasi */}
+                  <div className="p-4 rounded-2xl bg-stone-950 border border-stone-850 space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Mode Aplikasi</span>
+                    <span className="text-sm font-black text-white block">FULL VERSION</span>
+                    <span className="text-[11px] text-emerald-400 font-medium block">Bebas Mode Demo / Trial</span>
+                  </div>
+
+                  {/* 5. Masa Berlaku */}
+                  <div className="p-4 rounded-2xl bg-stone-950 border border-stone-850 space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Masa Berlaku</span>
+                    <span className="text-sm font-black text-white block">Tidak Terbatas (Lifetime)</span>
+                    <span className="text-[11px] text-stone-400 block">Permanen tanpa kedaluwarsa</span>
+                  </div>
+
+                  {/* 6. Status Trial */}
+                  <div className="p-4 rounded-2xl bg-stone-950 border border-stone-850 space-y-1">
+                    <span className="text-[10px] font-bold uppercase tracking-wider text-stone-500 block">Status Trial</span>
+                    <span className="text-sm font-black text-stone-200 block">NONAKTIF (DISABLED)</span>
+                    <span className="text-[11px] text-stone-400 block">Subscription Required: NO</span>
+                  </div>
+                </div>
+
+                {/* Database Specification Row */}
+                <div className="p-4 rounded-2xl bg-stone-950 border border-stone-850 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-xl bg-orange-500/10 text-orange-400 flex items-center justify-center shrink-0">
+                      <Database className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <div className="text-[10px] font-bold uppercase tracking-wider text-stone-500">Database Utama</div>
+                      <div className="text-sm font-black text-white">Firebase Cloud Firestore</div>
+                      <div className="text-xs text-stone-400 font-mono truncate max-w-xs sm:max-w-md">
+                        ai-studio-warungbangkobrap-401ec4da-26a9-46ee-81d6-9ef460b476b0
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={async () => {
+                      showToast('Menguji koneksi ke cloud Firestore...', 'info');
+                      const res = await testFirestoreConnection();
+                      if (res.connected) {
+                        showToast('Firestore terhubung realtime!', 'success');
+                      } else {
+                        showToast(`Koneksi Firestore: ${res.message}`, 'error');
+                      }
+                    }}
+                    className="px-3.5 py-2 rounded-xl bg-stone-900 hover:bg-stone-800 border border-stone-800 text-stone-200 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
+                  >
+                    <RefreshCw className="w-3.5 h-3.5 text-emerald-400" />
+                    <span>Tes Koneksi Firestore</span>
+                  </button>
+                </div>
+
+                {/* Checklist Feature Unlocked */}
+                <div className="p-4 rounded-2xl bg-stone-950 border border-stone-850 space-y-2.5">
+                  <div className="text-xs font-bold text-stone-300 uppercase tracking-wider">
+                    Modul &amp; Fitur Warung Terbuka Penuh:
+                  </div>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-2 text-xs text-stone-300">
+                    {[
+                      'Kasir POS & Struk Digital',
+                      'Manajemen Produk & Varian Rasa',
+                      'Manajemen Kategori & Stok Realtime',
+                      'Layanan Takeaway & Panggilan Suara',
+                      'Delivery DQM & Kurir',
+                      'Katalog Online Pelanggan',
+                      'QR Code Order Meja & Standee',
+                      'Auto Reply Chat Pelanggan 24/7',
+                      'Notifikasi Suara Pesanan & Chat',
+                      'Manajemen Pengguna & Hak Akses (RBAC)',
+                      'Laporan Penjualan & Ekspor Excel',
+                      'Backup & Sinkronisasi Cloud Firestore',
+                    ].map((feat, idx) => (
+                      <div key={idx} className="flex items-center gap-2 p-2 rounded-xl bg-stone-900/60 border border-stone-850">
+                        <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0" />
+                        <span>{feat}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            </SettingSectionCard>
+          )}
+
+          {/* ========================================================
+              25. TENTANG WARUNG BANG KOBRA
              ======================================================== */}
           {activeTab === 'about' && (
             <SettingSectionCard
@@ -2837,7 +2992,7 @@ export const SettingsView: React.FC<SettingsViewProps> = ({
                 Konfirmasi Reset Data (Owner Only)
               </h3>
               <p className="text-xs text-stone-400 leading-relaxed">
-                Apakah Anda benar-benar yakin ingin mengatur ulang data demo aplikasi? Tindakan ini tidak dapat dibatalkan.
+                Apakah Anda benar-benar yakin ingin mengatur ulang data operasional dan kasir aplikasi? Tindakan ini tidak dapat dibatalkan.
               </p>
             </div>
             <div className="flex items-center gap-2 pt-2">
